@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { ChatSidebar } from "@/components/chat-sidebar"
 import { ChatWindow } from "@/components/chat-window"
+import { useSocket } from "@/hooks/use-socket"
 import type { Conversation, Message } from "@/types"
 
 export default function WhatsAppClone() {
@@ -10,6 +11,7 @@ export default function WhatsAppClone() {
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(true)
+  const { socket, isConnected, connectionError, joinConversation, leaveConversation, sendMessage, updateStatus } = useSocket()
 
   useEffect(() => {
     fetchConversations()
@@ -18,8 +20,58 @@ export default function WhatsAppClone() {
   useEffect(() => {
     if (selectedConversation) {
       fetchMessages(selectedConversation)
+      // Join the conversation room for real-time updates
+      joinConversation(selectedConversation)
+    } else {
+      // Leave the previous conversation room
+      if (selectedConversation) {
+        leaveConversation(selectedConversation)
+      }
     }
-  }, [selectedConversation])
+
+    return () => {
+      if (selectedConversation) {
+        leaveConversation(selectedConversation)
+      }
+    }
+  }, [selectedConversation, joinConversation, leaveConversation])
+
+  // Real-time message updates
+  useEffect(() => {
+    if (!socket) return
+
+    // Listen for new messages
+    socket.on("new-message", (message: Message) => {
+      console.log("💬 Real-time: New message received", message.text)
+      if (message.conversationId === selectedConversation) {
+        setMessages((prev) => [...prev, message])
+      }
+      // Update conversation list to show new last message
+      fetchConversations()
+    })
+
+    // Listen for message status updates
+    socket.on("message-status-update", (update: { messageId: string; status: string }) => {
+      console.log("📊 Real-time: Status update", update)
+      setMessages((prev) => 
+        prev.map((msg) => 
+          msg.id === update.messageId ? { ...msg, status: update.status } : msg
+        )
+      )
+    })
+
+    // Listen for message sent confirmation
+    socket.on("message-sent", (message: Message) => {
+      console.log("✅ Real-time: Message sent confirmation", message.text)
+      // You can add visual feedback here
+    })
+
+    return () => {
+      socket.off("new-message")
+      socket.off("message-status-update")
+      socket.off("message-sent")
+    }
+  }, [socket, selectedConversation])
 
   const fetchConversations = async () => {
     try {
@@ -64,8 +116,24 @@ export default function WhatsAppClone() {
 
       if (response.ok) {
         const newMessage = await response.json()
+        
+        // Add message to local state immediately
         setMessages((prev) => [...prev, newMessage])
-        fetchConversations() // Update last message in sidebar
+        
+        // Send via WebSocket for real-time updates
+        sendMessage(newMessage)
+        
+        // Update conversation list
+        fetchConversations()
+        
+        // Simulate status updates (sent -> delivered -> read)
+        setTimeout(() => {
+          updateStatus(newMessage.id, "delivered", selectedConversation)
+        }, 1000)
+        
+        setTimeout(() => {
+          updateStatus(newMessage.id, "read", selectedConversation)
+        }, 3000)
       }
     } catch (error) {
       console.error("Error sending message:", error)
@@ -78,6 +146,9 @@ export default function WhatsAppClone() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading WhatsApp Clone...</p>
+          <div className="mt-2 text-sm text-gray-500">
+            {isConnected ? "🔌 Connected" : connectionError ? "🔌 Connection failed" : "🔌 Connecting..."}
+          </div>
         </div>
       </div>
     )
@@ -103,6 +174,7 @@ export default function WhatsAppClone() {
             conversation={selectedConv}
             messages={messages}
             onSendMessage={handleSendMessage}
+            isConnected={isConnected}
           />
         ) : (
           <div className="flex items-center justify-center h-full bg-gray-50">
@@ -114,6 +186,9 @@ export default function WhatsAppClone() {
               </div>
               <h2 className="text-xl font-semibold text-gray-900 mb-2">Welcome to WhatsApp Clone</h2>
               <p className="text-gray-600">Select a conversation to start messaging</p>
+              <div className="mt-4 text-sm text-gray-500">
+                {isConnected ? "🔌 Real-time connected" : connectionError ? "🔌 Real-time unavailable" : "🔌 Connecting..."}
+              </div>
             </div>
           </div>
         )}
@@ -128,6 +203,7 @@ export default function WhatsAppClone() {
             onSendMessage={handleSendMessage}
             onBack={() => setSelectedConversation(null)}
             isMobile
+            isConnected={isConnected}
           />
         </div>
       )}

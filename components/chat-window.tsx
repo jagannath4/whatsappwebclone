@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react"
 import { ArrowLeft, Phone, Video, MoreVertical, Send, Smile, Paperclip, Mic } from "lucide-react"
 import type { Conversation, Message } from "@/types"
 import { MessageBubble } from "./message-bubble"
+import { RealTimeIndicator } from "./real-time-indicator"
 
 interface ChatWindowProps {
   conversation: Conversation
@@ -13,9 +14,10 @@ interface ChatWindowProps {
   onSendMessage: (text: string) => void
   onBack?: () => void
   isMobile?: boolean
+  isConnected?: boolean
 }
 
-export function ChatWindow({ conversation, messages, onSendMessage, onBack, isMobile }: ChatWindowProps) {
+export function ChatWindow({ conversation, messages, onSendMessage, onBack, isMobile, isConnected = false }: ChatWindowProps) {
   const [messageText, setMessageText] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -58,7 +60,10 @@ export function ChatWindow({ conversation, messages, onSendMessage, onBack, isMo
 
         <div className="flex-1">
           <h2 className="font-medium text-gray-900">{conversation.contact.name}</h2>
-          <p className="text-sm text-gray-500">+{conversation.contact.wa_id}</p>
+          <div className="flex items-center space-x-2">
+            <p className="text-sm text-gray-500">+{conversation.contact.wa_id}</p>
+            <RealTimeIndicator isConnected={isConnected} />
+          </div>
         </div>
 
         {/* Actions */}
@@ -102,7 +107,10 @@ export function ChatWindow({ conversation, messages, onSendMessage, onBack, isMo
                     </span>
                   </div>
                 )}
-                <MessageBubble message={message} />
+                <MessageBubble 
+                  message={message} 
+                  isOwnMessage={message.from === "918329446654"} // Business phone number
+                />
               </div>
             )
           })

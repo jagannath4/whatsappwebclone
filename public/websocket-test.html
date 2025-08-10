@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .connected { background-color: #d4edda; color: #155724; }
+        .disconnected { background-color: #f8d7da; color: #721c24; }
+        .message { background-color: #e2e3e5; padding: 10px; margin: 5px 0; border-radius: 5px; }
+        button { padding: 10px 20px; margin: 5px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>🔌 WebSocket Real-time Test</h1>
+    
+    <div id="status" class="status disconnected">
+        🔌 Connecting to WebSocket server...
+    </div>
+    
+    <div>
+        <button onclick="joinConversation()">👥 Join Conversation</button>
+        <button onclick="sendTestMessage()">💬 Send Test Message</button>
+        <button onclick="updateStatus()">📊 Update Status</button>
+    </div>
+    
+    <h3>📨 Messages:</h3>
+    <div id="messages"></div>
+    
+    <script>
+        const socket = io('http://localhost:3000', {
+            path: '/api/socket'
+        });
+        
+        const statusDiv = document.getElementById('status');
+        const messagesDiv = document.getElementById('messages');
+        
+        socket.on('connect', () => {
+            statusDiv.className = 'status connected';
+            statusDiv.innerHTML = '✅ Connected to WebSocket server!';
+            addMessage('🔌 Connected to WebSocket server');
+        });
+        
+        socket.on('disconnect', () => {
+            statusDiv.className = 'status disconnected';
+            statusDiv.innerHTML = '❌ Disconnected from WebSocket server';
+            addMessage('🔌 Disconnected from WebSocket server');
+        });
+        
+        socket.on('new-message', (message) => {
+            addMessage(`💬 New message: ${message.text}`);
+        });
+        
+        socket.on('message-status-update', (update) => {
+            addMessage(`📊 Status update: ${update.messageId} -> ${update.status}`);
+        });
+        
+        socket.on('message-sent', (message) => {
+            addMessage(`✅ Message sent confirmation: ${message.text}`);
+        });
+        
+        function joinConversation() {
+            const conversationId = '919937320320_629305560276479';
+            socket.emit('join-conversation', conversationId);
+            addMessage(`👥 Joined conversation: ${conversationId}`);
+        }
+        
+        function sendTestMessage() {
+            const testMessage = {
+                id: `test_${Date.now()}`,
+                conversationId: '919937320320_629305560276479',
+                from: '918329446654',
+                text: 'This is a real-time test message! 🚀',
+                timestamp: Math.floor(Date.now() / 1000),
+                status: 'sent',
+                type: 'text'
+            };
+            
+            socket.emit('new-message', testMessage);
+            addMessage(`💬 Sending test message: ${testMessage.text}`);
+        }
+        
+        function updateStatus() {
+            const update = {
+                messageId: `test_${Date.now()}`,
+                status: 'read',
+                conversationId: '919937320320_629305560276479'
+            };
+            
+            socket.emit('status-update', update);
+            addMessage(`📊 Sending status update: ${update.messageId} -> ${update.status}`);
+        }
+        
+        function addMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${text}`;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+    </script>
+</body>
+</html> 
