@@ -1,0 +1,100 @@
+[
+  {
+    "id": "wamid.HBgMOTE5OTY3NTc4NzIwFQIAEhggMTIzQURFRjEyMzQ1Njc4OTA=",
+    "conversationId": "919937320320_629305560276479",
+    "from": "919937320320",
+    "text": "Hi, I’d like to know more about your services.",
+    "timestamp": 1754400000,
+    "status": "sent",
+    "type": "text",
+    "contact": {
+      "name": "Ravi Kumar",
+      "wa_id": "919937320320"
+    },
+    "metadata": {
+      "phone_number_id": "629305560276479",
+      "display_phone_number": "918329446654"
+    },
+    "createdAt": "2025-08-10T09:57:51.913Z",
+    "processed": true
+  },
+  {
+    "id": "wamid.HBgMOTE5OTY3NTc4NzIwFQIAEhggNDc4NzZBQ0YxMjdCQ0VFOTk2NzA3MTI4RkZCNjYyMjc=",
+    "conversationId": "919937320320_629305560276479",
+    "from": "918329446654",
+    "text": "Hi Ravi! Sure, I’d be happy to help you with that. Could you tell me what you're looking for?",
+    "timestamp": 1754400020,
+    "status": "read",
+    "type": "text",
+    "contact": {
+      "name": "Ravi Kumar",
+      "wa_id": "919937320320"
+    },
+    "metadata": {
+      "phone_number_id": "629305560276479",
+      "display_phone_number": "918329446654"
+    },
+    "createdAt": "2025-08-10T09:57:51.918Z",
+    "processed": true,
+    "statusUpdatedAt": "2025-08-10T09:57:51.929Z"
+  },
+  {
+    "id": "wamid.HBgMOTE5OTY3NTc4NzIwFQIAEhggMTIzQURFRjEyMzQ1Njc4OTA=",
+    "conversationId": "919937320320_629305560276479",
+    "from": "919937320320",
+    "text": "Hi, I’d like to know more about your services.",
+    "timestamp": 1754400000,
+    "status": "sent",
+    "type": "text",
+    "contact": {
+      "name": "Ravi Kumar",
+      "wa_id": "919937320320"
+    },
+    "metadata": {
+      "phone_number_id": "629305560276479",
+      "display_phone_number": "918329446654"
+    },
+    "createdAt": "2025-08-10T09:57:51.921Z",
+    "processed": true
+  },
+  {
+    "id": "wamid.HBgMOTI5OTY3NjczODIwFQIAEhggQ0FBQkNERUYwMDFGRjEyMzQ1NkZGQTk5RTJCM0I2NzY=",
+    "conversationId": "929967673820_629305560276479",
+    "from": "929967673820",
+    "text": "Hi, I saw your ad. Can you share more details?",
+    "timestamp": 1754401000,
+    "status": "sent",
+    "type": "text",
+    "contact": {
+      "name": "Neha Joshi",
+      "wa_id": "929967673820"
+    },
+    "metadata": {
+      "phone_number_id": "629305560276479",
+      "display_phone_number": "918329446654"
+    },
+    "createdAt": "2025-08-10T09:57:51.935Z",
+    "processed": true,
+    "statusUpdatedAt": "2025-08-10T09:57:51.944Z"
+  },
+  {
+    "id": "wamid.HBgMOTI5OTY3NjczODIwFQIAEhggM0RFNDkxRjEwNDhDQzgwMzk3NzA1ODc1RkU3QzI0MzU=",
+    "conversationId": "929967673820_629305560276479",
+    "from": "918329446654",
+    "text": "Hi Neha! Absolutely. We offer curated home decor pieces—are you looking for nameplates, wall art, or something else?",
+    "timestamp": 1754401030,
+    "status": "delivered",
+    "type": "text",
+    "contact": {
+      "name": "Neha Joshi",
+      "wa_id": "929967673820"
+    },
+    "metadata": {
+      "phone_number_id": "629305560276479",
+      "display_phone_number": "918329446654"
+    },
+    "createdAt": "2025-08-10T09:57:51.938Z",
+    "processed": true,
+    "statusUpdatedAt": "2025-08-10T09:57:51.948Z"
+  }
+]
